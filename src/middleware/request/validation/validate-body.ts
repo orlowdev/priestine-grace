@@ -5,13 +5,13 @@ import { BadRequestError } from "../../../errors";
 /**
  * Validate request body residing in `intermediate.requestBody` property with given set of validators.
  */
-export const ValidateObjectBodyProp = <T, K extends keyof T = keyof T>(
+export const ValidateObjectBodyProp = <T, K extends keyof T = keyof T>(opts: {
   key: K,
-  message: string = 'bad request',
+  message?: string,
   validators: Array<(value: T[K]) => boolean>
-) => ({ intermediate }: HttpContextInterface<RequestBodyAware<T>>) => {
-  if (!validators.reduce((result, validate) => result && validate(intermediate.requestBody[key]), true)) {
-    throw BadRequestError.withMessage(message);
+}) => ({ intermediate }: HttpContextInterface<RequestBodyAware<T>>) => {
+  if (!opts.validators.reduce((result, validate) => result && validate(intermediate.requestBody[opts.key]), true)) {
+    throw BadRequestError.withMessage(opts.message || 'bad request');
   }
 };
 
@@ -19,17 +19,17 @@ export const ValidateObjectBodyProp = <T, K extends keyof T = keyof T>(
  * Validate request body array residing in `intermediate.requestBody` property applying given set of validators to the
  * property of each object in the array.
  */
-export const ValidateArrayBodyProp = <T, A extends T[] = T[], K extends keyof T = keyof T>(
+export const ValidateArrayBodyProp = <T, A extends T[] = T[], K extends keyof T = keyof T>(opts: {
   key: K,
-  message: string = 'bad request',
+  message?: string,
   validators: Array<(value: T[K]) => boolean>
-) => ({ intermediate }: HttpContextInterface<RequestBodyAware<A>>) => {
+}) => ({ intermediate }: HttpContextInterface<RequestBodyAware<A>>) => {
   if (
-    !validators.reduce(
-      (result, validate) => result && intermediate.requestBody.reduce((p, i) => p && validate(i[key]), true),
+    !opts.validators.reduce(
+      (result, validate) => result && intermediate.requestBody.reduce((p, i) => p && validate(i[opts.key]), true),
       true
     )
   ) {
-    throw BadRequestError.withMessage(message);
+    throw BadRequestError.withMessage(opts.message || 'bad request');
   }
 };
