@@ -10,9 +10,9 @@ export interface IRequestParamsAware {
 /**
  * Extract request parameters from the url.
  */
-export const ExtractRequestParams = (ctx: HttpContextInterface<IRequestParamsAware>) => {
-  ctx.intermediate.requestParams =
-    typeof ctx.intermediate.route.url === 'string' ? [] : ctx.request.url.match(ctx.intermediate.route.url).slice(1);
+export const ExtractRequestParams = ({ request, intermediate }: HttpContextInterface<IRequestParamsAware>) => {
+  intermediate.requestParams =
+    typeof intermediate.route.url === 'string' ? [] : request.url.match(intermediate.route.url).slice(1);
 
-  return ctx;
+  return intermediate;
 };
