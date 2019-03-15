@@ -19,27 +19,29 @@ style:
   stage: style
   script:
     - npm run style:check
-  except:
-    - tags
+
+coverage:report:
+  image: node:10
+  stage: test
+  script:
+    - yarn coverage:cover
+  after_script:
+    - bash <(curl -s https://codecov.io/bash) -t "${CODECOV_TOKEN}" -f coverage/*.json
+  only:
     - master
+  allow_failure: true
 
 1:2 coverage:
   image: node:10-alpine
   stage: test
   script:
     - npm run test:cover
-  except:
-    - tags
-    - master
 
 2:2 coverage:
   image: node:8-alpine
   stage: test
   script:
     - npm run test:cover
-  except:
-    - tags
-    - master
 
 versioning:
   stage: versioning
