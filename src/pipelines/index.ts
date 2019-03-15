@@ -1,3 +1,3 @@
-export * from './access-control-pipeline';
-export * from './authorization-header.pipeline';
+export * from './access-control';
+export * from './authorization-header';
 export * from './end-response';

@@ -6,7 +6,7 @@ import {
   SetAccessControlExposeHeadersHeader,
 } from '../middleware/response';
 import { BaseHttpMatcher, HttpContextInterface, HttpRouter } from '@priestine/routing';
-import { AuthorizationHeaderAware } from './authorization-header.pipeline';
+import { AuthorizationHeaderAware } from './authorization-header';
 
 /**
  * @interface AccessControlPipelineOpts
@@ -34,6 +34,7 @@ export interface AccessControlPipelineOpts {
 
 /**
  * Detect possible HTTP methods for current URL.
+ * @todo Capturing groups
  */
 export const DetectAllowedMethods = (router: HttpRouter) => (ctx: HttpContextInterface): void => {
   if (ctx.intermediate.route) {

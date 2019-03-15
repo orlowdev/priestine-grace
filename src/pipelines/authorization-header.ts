@@ -64,7 +64,7 @@ export const GetAuthorizationHeaderValue = (authType: WWWAuthenticateType, messa
   request,
   intermediate,
 }: HttpContextInterface<AuthorizationHeaderAware>): AuthorizationHeaderAware => {
-  const authData = request.headers.authorization.match(new RegExp(`${authType}\s(.*)`));
+  const authData = request.headers.authorization.match(new RegExp(`${authType}\\s(.*)`));
 
   Either.fromNullable(authData)
     .chain((x) => Either.fromNullable(x[1]))
