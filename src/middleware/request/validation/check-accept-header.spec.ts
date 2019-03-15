@@ -18,6 +18,12 @@ describe('CheckAcceptHeader', () => {
     ).not.toThrow();
   });
 
+  it('should default acceptable to */*', () => {
+    expect(() =>
+      CheckAcceptHeader()({ request: { headers: { accept: 'application/xml' } } } as any)
+    ).not.toThrow();
+  });
+
   it('should not throw if given value is acceptable', () => {
     expect(() =>
       CheckAcceptHeader(['application/json', 'application/xml'])({
