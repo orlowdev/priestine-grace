@@ -1,17 +1,16 @@
-import { ExtractRequestParams } from "./extract-request-params";
+import { ExtractRequestParams } from './extract-request-params';
 
 describe('ExtractRequestParams', () => {
   it('should return empty array if the route is not RegExp matched', () => {
     expect(
-      ExtractRequestParams({ request: { url: '/' }, intermediate: { route: { url: '/' } } } as any).intermediate
-        .requestParams
+      ExtractRequestParams({ request: { url: '/' }, intermediate: { route: { url: '/' } } } as any).requestParams
     ).toEqual([]);
   });
 
   it('should assign matched parameters to the requestParams intermediate key', () => {
     expect(
       ExtractRequestParams({ request: { url: '/test' }, intermediate: { route: { url: /\/(.*)/ } } } as any)
-        .intermediate.requestParams
+        .requestParams
     ).toEqual(['test']);
   });
 });
