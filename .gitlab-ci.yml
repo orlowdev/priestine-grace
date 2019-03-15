@@ -1,0 +1,70 @@
+image: node:10-slim
+
+stages:
+  - style
+  - test
+  - versioning
+  - deploy
+
+before_script:
+  - npm install
+
+cache:
+  key: "$CI_COMMIT_REF_SLUG"
+  paths:
+  - node_modules/
+
+style:
+  image: node:10-alpine
+  stage: style
+  script:
+    - npm run style:check
+  except:
+    - tags
+    - master
+
+1:2 coverage:
+  image: node:10-alpine
+  stage: test
+  script:
+    - npm run test:cover
+  except:
+    - tags
+    - master
+
+2:2 coverage:
+  image: node:8-alpine
+  stage: test
+  script:
+    - npm run test:cover
+  except:
+    - tags
+    - master
+
+versioning:
+  stage: versioning
+  image: priestine/semantics:latest
+  script:
+    - priestine-semantics --private-token=${SEMANTICS_TOKEN} --fix-or-feat
+  only:
+    - master
+
+deploy:verdaccio:
+  stage: deploy
+  script:
+    - bash deploy_npm.sh
+  only:
+    - tags
+
+pages:
+  stage: deploy
+  script:
+    - npm run build:docs
+    - mkdir .public
+    - cp -r docs/* .public
+    - mv .public public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master
