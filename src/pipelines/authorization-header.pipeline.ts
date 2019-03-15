@@ -89,7 +89,7 @@ export const GetAuthorizationHeaderValue = (authType: WWWAuthenticateType, messa
  * @throws ForbiddenError
  */
 export const AuthorizationHeaderPipeline = (opts: AuthorizationHeaderPipelineOpts) =>
-  Pipeline.from([
+  Pipeline.from<AuthorizationHeaderAware, HttpContextInterface>([
     CheckAuthorizationHeaderExists(opts.messages && opts.messages.unauthorized),
     GetAuthorizationHeaderValue(opts.authType, opts.messages && opts.messages.forbidden),
   ]);
