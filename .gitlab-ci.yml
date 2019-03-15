@@ -49,7 +49,7 @@ versioning:
   only:
     - master
 
-deploy:verdaccio:
+deploy:npm:
   stage: deploy
   script:
     - bash deploy_npm.sh
