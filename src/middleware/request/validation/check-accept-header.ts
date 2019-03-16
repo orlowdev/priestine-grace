@@ -1,21 +1,24 @@
 import { HttpContextInterface } from '@priestine/routing';
-import { NotAcceptableError } from '../../../errors';
+import { HttpError, NotAcceptableError } from '../../../errors';
 
 /**
  * Check if accept header is defined and supported.
+ * @todo Passing errors instead of messages (everywhere)
+ * @todo Add common validators
+ * @todo Response body keys transformer
  *
  * @throws NotAcceptableError
  */
-export const CheckAcceptHeader = (acceptable: string[] = ['*/*'], message?: string) => ({
+export const CheckAcceptHeader = (acceptable: string[] = ['*/*'], error?: HttpError) => ({
   request,
 }: HttpContextInterface): void => {
   if (!request.headers.accept) {
-    throw NotAcceptableError.withMessage(message || 'not acceptable');
+    throw error ? error : NotAcceptableError.withMessage('not acceptable');
   }
 
   if (acceptable.includes('*/*') || acceptable.includes(request.headers.accept)) {
     return;
   }
 
-  throw NotAcceptableError.withMessage(message || 'not acceptable');
+  throw error ? error : NotAcceptableError.withMessage('not acceptable');
 };

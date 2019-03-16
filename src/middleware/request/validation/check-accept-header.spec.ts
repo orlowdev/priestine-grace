@@ -1,5 +1,5 @@
 import { CheckAcceptHeader } from './check-accept-header';
-import { NotAcceptableError } from '../../../errors';
+import { NotAcceptableError, NotFoundError } from '../../../errors';
 
 describe('CheckAcceptHeader', () => {
   it('should throw if accept header is not defined', () => {
@@ -12,6 +12,14 @@ describe('CheckAcceptHeader', () => {
     ).toThrow(NotAcceptableError);
   });
 
+  it('should throw provided error if it is specified', () => {
+    expect(() =>
+      CheckAcceptHeader(['application/json'], NotFoundError)({
+        request: { headers: { accept: 'application/xml' } },
+      } as any)
+    ).toThrow(NotFoundError);
+  });
+
   it('should not throw if */* is acceptable', () => {
     expect(() =>
       CheckAcceptHeader(['*/*'])({ request: { headers: { accept: 'application/xml' } } } as any)
@@ -19,9 +27,7 @@ describe('CheckAcceptHeader', () => {
   });
 
   it('should default acceptable to */*', () => {
-    expect(() =>
-      CheckAcceptHeader()({ request: { headers: { accept: 'application/xml' } } } as any)
-    ).not.toThrow();
+    expect(() => CheckAcceptHeader()({ request: { headers: { accept: 'application/xml' } } } as any)).not.toThrow();
   });
 
   it('should not throw if given value is acceptable', () => {
