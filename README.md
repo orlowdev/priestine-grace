@@ -206,3 +206,75 @@ const MyPipeline = Pipeline.empty()
   )
   .concat(/**/);
 ```
+
+#### `EndResponseBodyPipeline`
+
+> DEPRECATED: Will be renamed to `SendResponseBodyPipeline`
+
+End response by sending the contents of `ctx.intermediate.responseBody` to the client.
+
+If response is finished and an error occurred, the error will be put to stdout.
+If response is finished and no error happened, the pipeline does nothing.
+
+For TypeScript developers, it provides helper `ResponseBodyAware` interface to be passed to generic `HttpContextInterface`.
+
+```typescript
+const MyResponseRelatedMiddleware = (ctx: HttpContextInterface<ResponseBodyAware>) => {};
+```
+
+`ResponseBodyAware` is generic and provided type is referenced by `intermediate.responseBody`, e.g.:
+
+```typescript
+const MyResponseRelatedMiddleware = (ctx: HttpContextInterface<ResponseBodyAware<{ id: number }>>) => {};
+```
+
+##### Accepted arguments
+
+```typescript
+/**
+ * @interface EndResponsePipelineOpts
+ */
+export interface EndResponsePipelineOpts {
+  /**
+   * Flag for the pipeline to JSON.stringify responseBody.
+   */
+  json?: boolean;
+  /**
+   * Flag for wrapping response body into `{ success: boolean, data: <responseBody> }`.
+   */
+  wrap?: boolean;
+}
+```
+
+##### Usage
+
+```javascript
+const router = require('../routing').MainRouter;
+
+const MyPipeline = Pipeline.empty()
+  .concat(/**/)
+  .concat(
+    EndResponseBodyPipeline({
+      json: true,
+    })
+  );
+```
+
+#### `EndEmptyResponsePipeline`
+
+> DEPRECATED: Will be renamed to `SendEmptyResponsePipeline`
+
+End response empty string (_""_).
+
+If response is finished and an error occurred, the error will be put to stdout.
+If response is finished and no error happened, the pipeline does nothing.
+
+##### Usage
+
+```javascript
+const router = require('../routing').MainRouter;
+
+const MyPipeline = Pipeline.empty()
+  .concat(/**/)
+  .concat(EndEmptyResponsePipeline);
+```
