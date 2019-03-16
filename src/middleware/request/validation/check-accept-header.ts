@@ -3,9 +3,6 @@ import { HttpError, NotAcceptableError } from '../../../errors';
 
 /**
  * Check if accept header is defined and supported.
- * @todo Passing errors instead of messages (everywhere)
- * @todo Add common validators
- * @todo Response body keys transformer
  *
  * @throws NotAcceptableError
  */
