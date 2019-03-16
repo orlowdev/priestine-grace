@@ -278,3 +278,76 @@ const MyPipeline = Pipeline.empty()
   .concat(/**/)
   .concat(EndEmptyResponsePipeline);
 ```
+
+### Utils
+
+#### `getFromEnv`
+
+Simple function that returns contents of `process.env` for given key, or the default value.
+
+```javascript
+getFromEnv('MY_ENV_VAR', 'default_value');
+```
+
+#### `CaseTransformer`
+
+> DEPRECATED: Will be moved to external package
+
+CaseTransformer is a tool for transforming string from one case to another. Supported cases are:
+
+* camelCase
+* PascalCase
+* kebab-case
+* snake_case
+* dot.case
+* colon:case
+
+CaseTransformer can be used itself using its `of` pointer interface:
+
+```javascript
+const helloWorld = CaseTransformer.of('hello-world').from.kebab.to.camel;
+console.log(helloWorld); // helloWorld
+```
+
+Alternatively, you can use one of many helper functions:
+
+##### transformCase(str: string)
+
+`transformCase` is a pointer interface for lifting a string into transformation which is built via
+fluent interface chaining.
+
+```javascript
+console.log(transformCase('helloWorld').from.camel.to.snake) // hello_world
+```
+
+##### toXCase(strs: string[])
+
+Transforms array of strings to a string with given case. Supported helpers are:
+
+* toCamelCase
+* toKebabCase
+* toPascalCase
+* toSnakeCase
+* toDotCase
+* toColonCase
+
+```javascript
+// Example
+toDotCase(['http', 'errors', 'access_denied']); // 'http.errors.access_denied'
+```
+
+##### fromXCase(str: string)
+
+Transforms string in specified case to an array of separate strings. Supported helpers are:
+
+* fromCamelCase
+* fromKebabCase
+* fromPascalCase
+* fromSnakeCase
+* fromDotCase
+* fromColonCase
+
+```javascript
+// Example
+R.path(fromDotCase('http.errors.access_denied'), myTranslationsObject);
+```
