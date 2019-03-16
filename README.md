@@ -295,12 +295,12 @@ getFromEnv('MY_ENV_VAR', 'default_value');
 
 CaseTransformer is a tool for transforming string from one case to another. Supported cases are:
 
-* camelCase
-* PascalCase
-* kebab-case
-* snake_case
-* dot.case
-* colon:case
+- camelCase
+- PascalCase
+- kebab-case
+- snake_case
+- dot.case
+- colon:case
 
 CaseTransformer can be used itself using its `of` pointer interface:
 
@@ -317,19 +317,19 @@ Alternatively, you can use one of many helper functions:
 fluent interface chaining.
 
 ```javascript
-console.log(transformCase('helloWorld').from.camel.to.snake) // hello_world
+console.log(transformCase('helloWorld').from.camel.to.snake); // hello_world
 ```
 
 ##### toXCase(strs: string[])
 
 Transforms array of strings to a string with given case. Supported helpers are:
 
-* toCamelCase
-* toKebabCase
-* toPascalCase
-* toSnakeCase
-* toDotCase
-* toColonCase
+- toCamelCase
+- toKebabCase
+- toPascalCase
+- toSnakeCase
+- toDotCase
+- toColonCase
 
 ```javascript
 // Example
@@ -340,12 +340,12 @@ toDotCase(['http', 'errors', 'access_denied']); // 'http.errors.access_denied'
 
 Transforms string in specified case to an array of separate strings. Supported helpers are:
 
-* fromCamelCase
-* fromKebabCase
-* fromPascalCase
-* fromSnakeCase
-* fromDotCase
-* fromColonCase
+- fromCamelCase
+- fromKebabCase
+- fromPascalCase
+- fromSnakeCase
+- fromDotCase
+- fromColonCase
 
 ```javascript
 // Example
