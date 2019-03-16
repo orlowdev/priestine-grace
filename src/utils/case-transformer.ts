@@ -1,5 +1,6 @@
 /**
  * Transformer for string case, e.g. kebab-case to camelCase.
+ * @deprecated Will be extracted to a separate package.
  */
 export class CaseTransformer {
   /**
@@ -97,6 +98,7 @@ export class CaseTransformer {
 
 /**
  * Transform object keys.
+ * @deprecated Will be extracted to a separate package.
  */
 export const transformKeys = (transformer: (x: string) => string, obj: Object, delegate: Object = {}) => {
   Object.keys(obj).forEach((k) => {
@@ -122,65 +124,78 @@ export const transformKeys = (transformer: (x: string) => string, obj: Object, d
 
 /**
  * Pointer interface for lifting a value to CaseTransformer.
+ * @deprecated Will be extracted to a separate package.
  */
 export const transformCase = (x: string | string[]) => CaseTransformer.of(x);
 
 /**
  * Transform array of strings to snake_case.
+ * @deprecated Will be extracted to a separate package.
  */
 export const toSnakeCase = (x: string[]) => CaseTransformer.of(x).to.snake;
 
 /**
  * Transform array of strings to camelCase.
+ * @deprecated Will be extracted to a separate package.
  */
 export const toCamelCase = (x: string[]) => CaseTransformer.of(x).to.camel;
 
 /**
  * Transform array of strings to kebab-case.
+ * @deprecated Will be extracted to a separate package.
  */
 export const toKebabCase = (x: string[]) => CaseTransformer.of(x).to.kebab;
 
 /**
  * Transform array of strings to PascalCase.
+ * @deprecated Will be extracted to a separate package.
  */
 export const toPascalCase = (x: string[]) => CaseTransformer.of(x).to.pascal;
 
 /**
  * Transform array of strings to dot.case.
+ * @deprecated Will be extracted to a separate package.
  */
 export const toDotCase = (x: string[]) => CaseTransformer.of(x).to.dot;
 
 /**
  * Transform array of strings to colon:case.
+ * @deprecated Will be extracted to a separate package.
  */
 export const toColonCase = (x: string[]) => CaseTransformer.of(x).to.colon;
 
 /**
  * Transform string from snake_case.
+ * @deprecated Will be extracted to a separate package.
  */
 export const fromSnakeCase = (x: string) => CaseTransformer.of(x).from.snake.fold();
 
 /**
  * Transform string from camelCase.
+ * @deprecated Will be extracted to a separate package.
  */
 export const fromCamelCase = (x: string) => CaseTransformer.of(x).from.camel.fold();
 
 /**
  * Transform string from kebab-case.
+ * @deprecated Will be extracted to a separate package.
  */
 export const fromKebabCase = (x: string) => CaseTransformer.of(x).from.kebab.fold();
 
 /**
  * Transform string from PascalCase.
+ * @deprecated Will be extracted to a separate package.
  */
 export const fromPascalCase = (x: string) => CaseTransformer.of(x).from.pascal.fold();
 
 /**
  * Transform string from dot.case.
+ * @deprecated Will be extracted to a separate package.
  */
 export const fromDotCase = (x: string) => CaseTransformer.of(x).from.dot.fold();
 
 /**
  * Transform string from colon:case.
+ * @deprecated Will be extracted to a separate package.
  */
 export const fromColonCase = (x: string) => CaseTransformer.of(x).from.colon.fold();
