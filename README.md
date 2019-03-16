@@ -379,3 +379,114 @@ const myTranslationsObject = require('./en_US.json');
 
 R.path(fromDotCase('http.errors.access_denied'), myTranslationsObject);
 ```
+
+### Middleware
+
+#### Response-specific
+
+##### `SetHeader`
+
+A set of middleware for setting response headers. Each function accepts a value and returns a function that
+accepts the `HttpContextInterface`.
+
+```javascript
+const { Pipeline } = require('@priestine/data/src');
+const { SetContentTypeHeader, SetContentLanguageHeader, SetDateHeader } = require('@priestine/grace');
+
+const MyHeadersPipeline = Pipeline.from([
+  SetContentTypeHeader('application/json'),
+  SetContentLanguageHeader('en_US'),
+  SetDateHeader(new Date().toUTCString()),
+]);
+```
+
+###### List of supported SetHeader middleware
+
+- SetAcceptPatchHeader
+- SetAcceptRangesHeader
+- SetAllowHeader
+- SetAgeHeader
+- SetCacheControlHeader
+- SetConnectionHeader
+- SetContentTypeHeader
+- SetContentDispositionHeader
+- SetContentEncodingHeader
+- SetContentLanguageHeader
+- SetContentLengthHeader
+- SetContentLocationHeader
+- SetContentRangeHeader
+- SetDateHeader
+- SetETagHeader
+- SetLastModifiedHeader
+- SetLinkHeader
+- SetLocationHeader
+- SetProxyAuthenticateHeader
+- SetRetryAfterHeader
+- SetServerHeader
+- SetSetCookieHeader
+- SetStrictTransportPolicyHeader
+- SetTransferEncodingHeader
+- SetUpgradeHeader
+- SetVaryHeader
+- SetViaHeader
+- SetWarningHeader
+- SetWWWAuthenticateHeader
+- SetXRequestIDHeader
+- SetAccessControlAllowOriginHeader
+- SetAccessControlAllowMethodsHeader
+- SetAccessControlAllowHeadersHeader
+- SetAccessControlExposeHeadersHeader
+
+You can use these pre-defined middleware for building custom logic, e.g.:
+
+```javascript
+const uuid = require('uuid/v4');
+const { SetXRequestIDHeader, CheckAcceptHeader, SetContentTypeHeader } = require('@priestine/grace');
+const { Pipeline } = require('@priestine/data/src');
+
+/**
+ * Simple example.
+ * Sign each request with new UUID value.
+ */
+const SignRequest = SetXRequestIDHeader(uuid());
+
+/**
+ * A bit more complicated example.
+ * Check if client accepts application/json and fallback to application/xml if it doesn't.
+ * We don't need any checks as we have applied them in the previous step of the pipeline (see below).
+ */
+const AssignContentType = (ctx) => {
+  const acceptable = ctx.request.headers.accept.split(', ');
+  const json = acceptable.includes('*/*') || acceptable.includes('application/json');
+
+  return SetContentTypeHeader(json ? 'application/json' : 'application/xml');
+};
+
+const MyPipeline = Pipeline.from([
+  // Check Accept header exists and has supported value
+  CheckAcceptHeader(['*/*', 'application/json', 'application/xml']),
+  // Sign request with UUID
+  SignRequest,
+  // Assign response Content-Type header
+  AssignContentType,
+]);
+```
+
+##### `TransformResponseKeys`
+
+Transform keys of response object with given transformer function. The transformation is applied
+recursively.
+
+```javascript
+const { Pipeline } = require('@priestine/data/src');
+const { TransformResponseObjectKeys, EndResponseBodyPipeline } = require('@priestine/grace');
+
+const MyPipeline = Pipeline.of(TransformResponseObjectKeys((x) => x.toUpperCase())).concat(
+  EndResponseBodyPipeline({ json: true })
+);
+```
+
+The middleware has two helpers for common cases:
+
+- TransformResponseObjectKeysFromCamelToSnake
+- TransformResponseObjectKeysFromSnakeToCamel
