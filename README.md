@@ -30,6 +30,8 @@ that you can concat to your code where necessary.
 status code and error message. It provides chaining methods for setting up the response you want to send:
 
 ```javascript
+const { HttpError } = require('@priestine/grace');
+
 throw new HttpError().withStatusCode(400).withMessage('Missing required field "id"');
 
 // or
@@ -43,6 +45,8 @@ There is a set of predefined errors with appropriate status codes assigned so yo
 with required error messages. Refer to RFC or MDN for the description of status codes.
 
 ```javascript
+const { BadRequestError } = require('@priestine/grace');
+
 throw BadRequestError.withMessage('No-no-no');
 ```
 
@@ -130,6 +134,8 @@ export interface AccessControlPipelineOpts {
 ##### Usage
 
 ```javascript
+const { Pipeline } = require('@priestine/data/src');
+const { AccessControlPipeline } = require('@priestine/grace');
 const router = require('../routing').MainRouter;
 
 const MyPipeline = Pipeline.empty()
@@ -157,6 +163,9 @@ If the header is invalid (auth type wrong or no value), it throws `ForbiddenErro
 For TypeScript developers, it provides helper `AuthorizationHeaderAware` interface to be passed to generic `HttpContextInterface`.
 
 ```typescript
+import { HttpContextInterface } from '@priestine/routing';
+import { AuthorizationHeaderAware } from '@priestine/grace';
+
 const MyAuthRelatedMiddleware = (ctx: HttpContextInterface<AuthorizationHeaderAware>) => {};
 ```
 
@@ -192,7 +201,8 @@ export interface AuthorizationHeaderPipelineOpts {
 ##### Usage
 
 ```javascript
-const router = require('../routing').MainRouter;
+const { Pipeline } = require('@priestine/data/src');
+const { AuthorizationHeaderPipeline, UnauthorizedError, ForbiddenError } = require('@priestine/grace');
 
 const MyPipeline = Pipeline.empty()
   .concat(
@@ -219,12 +229,18 @@ If response is finished and no error happened, the pipeline does nothing.
 For TypeScript developers, it provides helper `ResponseBodyAware` interface to be passed to generic `HttpContextInterface`.
 
 ```typescript
+import { HttpContextInterface } from '@priestine/routing';
+import { ResponseBodyAware } from '@priestine/grace';
+
 const MyResponseRelatedMiddleware = (ctx: HttpContextInterface<ResponseBodyAware>) => {};
 ```
 
 `ResponseBodyAware` is generic and provided type is referenced by `intermediate.responseBody`, e.g.:
 
 ```typescript
+import { HttpContextInterface } from '@priestine/routing';
+import { ResponseBodyAware } from '@priestine/grace';
+
 const MyResponseRelatedMiddleware = (ctx: HttpContextInterface<ResponseBodyAware<{ id: number }>>) => {};
 ```
 
@@ -249,7 +265,8 @@ export interface EndResponsePipelineOpts {
 ##### Usage
 
 ```javascript
-const router = require('../routing').MainRouter;
+const { Pipeline } = require('@priestine/data/src');
+const { EndResponseBodyPipeline } = require('@priestine/grace');
 
 const MyPipeline = Pipeline.empty()
   .concat(/**/)
@@ -272,7 +289,7 @@ If response is finished and no error happened, the pipeline does nothing.
 ##### Usage
 
 ```javascript
-const router = require('../routing').MainRouter;
+const Pipeline = require('@priestine/data/src').Pipeline;
 
 const MyPipeline = Pipeline.empty()
   .concat(/**/)
@@ -286,6 +303,8 @@ const MyPipeline = Pipeline.empty()
 Simple function that returns contents of `process.env` for given key, or the default value.
 
 ```javascript
+const { getFromEnv } = require('@priestine/grace');
+
 getFromEnv('MY_ENV_VAR', 'default_value');
 ```
 
@@ -305,6 +324,8 @@ CaseTransformer is a tool for transforming string from one case to another. Supp
 CaseTransformer can be used itself using its `of` pointer interface:
 
 ```javascript
+const { CaseTransformer } = require('@priestine/grace');
+
 const helloWorld = CaseTransformer.of('hello-world').from.kebab.to.camel;
 console.log(helloWorld); // helloWorld
 ```
@@ -317,6 +338,8 @@ Alternatively, you can use one of many helper functions:
 fluent interface chaining.
 
 ```javascript
+const { transformCase } = require('@priestine/grace');
+
 console.log(transformCase('helloWorld').from.camel.to.snake); // hello_world
 ```
 
@@ -333,6 +356,8 @@ Transforms array of strings to a string with given case. Supported helpers are:
 
 ```javascript
 // Example
+const { toDotCase } = require('@priestine/grace');
+
 toDotCase(['http', 'errors', 'access_denied']); // 'http.errors.access_denied'
 ```
 
@@ -349,5 +374,8 @@ Transforms string in specified case to an array of separate strings. Supported h
 
 ```javascript
 // Example
+const { fromDotCase } = require('@priestine/grace');
+const myTranslationsObject = require('./en_US.json');
+
 R.path(fromDotCase('http.errors.access_denied'), myTranslationsObject);
 ```
