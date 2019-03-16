@@ -1,5 +1,5 @@
 import { HttpContextInterface } from '@priestine/routing';
-import { ForbiddenError, UnauthorizedError } from '../errors';
+import { ForbiddenError, HttpError, UnauthorizedError } from '../errors';
 import { Either, Pipeline } from '@priestine/data';
 
 /**
@@ -28,17 +28,17 @@ export interface AuthorizationHeaderPipelineOpts {
   /**
    * Custom messages to be displayed in case error occurs.
    */
-  messages?: {
+  errors?: {
     /**
-     * Error message if request does not have Authorization header.
-     * @default "unauthorized"
+     * Error if request does not have Authorization header.
+     * @default UnauthorizedError
      */
-    unauthorized?: string;
+    unauthorized?: HttpError;
     /**
-     * Error message if request has invalid Authorization header.
-     * @default "forbidden"
+     * Error if request has invalid Authorization header.
+     * @default ForbiddenError
      */
-    forbidden?: string;
+    forbidden?: HttpError;
   };
 }
 
@@ -47,9 +47,9 @@ export interface AuthorizationHeaderPipelineOpts {
  *
  * @throws UnauthorizedError
  */
-export const CheckAuthorizationHeaderExists = (message?: string) => ({ request }: HttpContextInterface): void => {
+export const CheckAuthorizationHeaderExists = (error?: HttpError) => ({ request }: HttpContextInterface): void => {
   if (!request.headers.authorization) {
-    throw UnauthorizedError.withMessage(message || 'unauthorized');
+    throw error ? error : UnauthorizedError.withMessage('unauthorized');
   }
 };
 
@@ -60,7 +60,7 @@ export const CheckAuthorizationHeaderExists = (message?: string) => ({ request }
  *
  * @throws ForbiddenError
  */
-export const GetAuthorizationHeaderValue = (authType: WWWAuthenticateType, message?: string) => ({
+export const GetAuthorizationHeaderValue = (authType: WWWAuthenticateType, error?: HttpError) => ({
   request,
   intermediate,
 }: HttpContextInterface<AuthorizationHeaderAware>): AuthorizationHeaderAware => {
@@ -70,7 +70,7 @@ export const GetAuthorizationHeaderValue = (authType: WWWAuthenticateType, messa
     .chain((x) => Either.fromNullable(x[1]))
     .fold(
       () => {
-        throw ForbiddenError.withMessage(message || 'forbidden');
+        throw error ? error : ForbiddenError.withMessage('forbidden');
       },
       (x) => {
         intermediate.authorizationHeaderValue = x;
@@ -90,6 +90,6 @@ export const GetAuthorizationHeaderValue = (authType: WWWAuthenticateType, messa
  */
 export const AuthorizationHeaderPipeline = (opts: AuthorizationHeaderPipelineOpts) =>
   Pipeline.from<AuthorizationHeaderAware, HttpContextInterface>([
-    CheckAuthorizationHeaderExists(opts.messages && opts.messages.unauthorized),
-    GetAuthorizationHeaderValue(opts.authType, opts.messages && opts.messages.forbidden),
+    CheckAuthorizationHeaderExists(opts.errors && opts.errors.unauthorized),
+    GetAuthorizationHeaderValue(opts.authType, opts.errors && opts.errors.forbidden),
   ]);

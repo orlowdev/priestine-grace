@@ -1,6 +1,6 @@
 import { HttpContextInterface } from '@priestine/routing';
 import { RequestBodyAware } from '../extract-json-request-body';
-import { BadRequestError } from '../../../errors';
+import { BadRequestError, HttpError } from '../../../errors';
 
 /**
  * @interface ValidateBodyOpts
@@ -15,10 +15,10 @@ export interface ValidateBodyOpts<T, K extends keyof T = keyof T> {
    */
   validators: Array<(value: T[K]) => boolean>;
   /**
-   * Optional error message.
-   * @default "bad request"
+   * Custom error to be thrown.
+   * @default BadRequestError
    */
-  message?: string;
+  error?: HttpError;
 }
 
 /**
@@ -28,7 +28,7 @@ export const ValidateObjectBodyProp = <T, K extends keyof T = keyof T>(opts: Val
   intermediate,
 }: HttpContextInterface<RequestBodyAware<T>>) => {
   if (!opts.validators.reduce((result, validate) => result && validate(intermediate.requestBody[opts.key]), true)) {
-    throw BadRequestError.withMessage(opts.message || 'bad request');
+    throw opts.error ? opts.error : BadRequestError.withMessage('bad request');
   }
 };
 
@@ -45,6 +45,6 @@ export const ValidateArrayBodyProp = <T, A extends T[] = T[], K extends keyof T 
       true
     )
   ) {
-    throw BadRequestError.withMessage(opts.message || 'bad request');
+    throw opts.error ? opts.error : BadRequestError.withMessage('bad request');
   }
 };

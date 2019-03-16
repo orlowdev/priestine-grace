@@ -1,7 +1,7 @@
-import { HttpContextInterface, HttpError } from '@priestine/routing';
+import { HttpContextInterface } from '@priestine/routing';
 import { map } from 'event-stream';
+import { BadRequestError } from '../../errors';
 import JSONStream = require('JSONStream');
-import { BadRequestError } from '../../errors/4xx';
 
 /**
  * @interface IRequestBodyAware

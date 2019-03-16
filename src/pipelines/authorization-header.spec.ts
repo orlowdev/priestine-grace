@@ -2,7 +2,7 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { Socket } from 'net';
 import { HttpContextInterface } from '@priestine/routing';
 import { AuthorizationHeaderPipeline } from './authorization-header';
-import { ForbiddenError, UnauthorizedError } from '../errors';
+import { ForbiddenError, NotFoundError, UnauthorizedError } from '../errors';
 
 describe('AuthorizationHeader', () => {
   it('should throw 401 if Authorization header is not in place', async () => {
@@ -21,9 +21,9 @@ describe('AuthorizationHeader', () => {
     const response = new ServerResponse(request);
     const ctx = { request, response, intermediate: {} } as HttpContextInterface;
     expect(
-      (await AuthorizationHeaderPipeline({ authType: 'Basic', messages: { unauthorized: 'no' } }).process(ctx)).error
-        .message
-    ).toEqual('no');
+      (await AuthorizationHeaderPipeline({ authType: 'Basic', errors: { unauthorized: NotFoundError } }).process(ctx))
+        .error
+    ).toEqual(NotFoundError);
   });
 
   it('should throw 403 if Authorization header has invalid type', async () => {
@@ -44,9 +44,9 @@ describe('AuthorizationHeader', () => {
     const response = new ServerResponse(request);
     const ctx = { request, response, intermediate: {} } as HttpContextInterface;
     expect(
-      (await AuthorizationHeaderPipeline({ authType: 'Basic', messages: { forbidden: 'no' } }).process(ctx)).error
-        .message
-    ).toEqual('no');
+      (await AuthorizationHeaderPipeline({ authType: 'Basic', errors: { forbidden: NotFoundError } }).process(ctx))
+        .error
+    ).toEqual(NotFoundError);
   });
 
   it('should do set value of Authorization header to the intermediate', async () => {
