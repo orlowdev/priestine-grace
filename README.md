@@ -31,13 +31,20 @@ status code and error message. It provides chaining methods for setting up the r
 
 ```javascript
 throw new HttpError().withStatusCode(400).withMessage('Missing required field "id"');
+
+// or
+
+reject(new HttpError().withStatusCode(400).withMessage('Missing required field "id"'));
 ```
+
+**NOTE**: `HttpError` is not intended to be used for debugging or serving as a wrapper for ambiguous errors you do not anticipate.
 
 There is a set of predefined errors with appropriate status codes assigned so you can use them and extend
 with required error messages. Refer to RFC or MDN for the description of status codes.
 
-**NOTE**: `HttpError` is not intended to be used for debugging or serving as
-a wrapper for ambiguous errors you do not anticipate.
+```javascript
+throw BadRequestError.withMessage('No-no-no');
+```
 
 #### 4xx Errors
 
