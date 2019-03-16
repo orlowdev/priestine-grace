@@ -48,44 +48,161 @@ throw BadRequestError.withMessage('No-no-no');
 
 #### 4xx Errors
 
-* `BadRequestError` (400)
-* `UnauthorizedError` (401)
-* `ForbiddenError` (402)
-* `NotFoundError` (404)
-* `MethodNotAllowedError` (405)
-* `NotAcceptableError` (406)
-* `ProxyAuthenticationRequiredError` (407)
-* `RequestTimeoutError` (408)
-* `ConflictError` (409)
-* `GoneError` (410)
-* `LengthRequiredError` (411)
-* `PreconditionFailedError` (412)
-* `PayloadTooLargeError` (413)
-* `URITooLongError` (414)
-* `UnsupportedMediaTypeError` (415)
-* `RequestedRangeNotSatisfiableError` (416)
-* `ExpectationFailedError` (417)
-* `MisdirectedRequestError` (421)
-* `UnprocessableEntityError` (422)
-* `LockedError` (423)
-* `FailedDependencyError` (424)
-* `TooEarlyError` (425)
-* `UpgradeRequiredError` (426)
-* `PreconditionRequiredError` (428)
-* `TooManyRequestsError` (429)
-* `RequestHeaderFieldsTooLargeError` (431)
-* `UnavailableForLegalReasonsError` (451)
+- `BadRequestError` (400)
+- `UnauthorizedError` (401)
+- `ForbiddenError` (402)
+- `NotFoundError` (404)
+- `MethodNotAllowedError` (405)
+- `NotAcceptableError` (406)
+- `ProxyAuthenticationRequiredError` (407)
+- `RequestTimeoutError` (408)
+- `ConflictError` (409)
+- `GoneError` (410)
+- `LengthRequiredError` (411)
+- `PreconditionFailedError` (412)
+- `PayloadTooLargeError` (413)
+- `URITooLongError` (414)
+- `UnsupportedMediaTypeError` (415)
+- `RequestedRangeNotSatisfiableError` (416)
+- `ExpectationFailedError` (417)
+- `MisdirectedRequestError` (421)
+- `UnprocessableEntityError` (422)
+- `LockedError` (423)
+- `FailedDependencyError` (424)
+- `TooEarlyError` (425)
+- `UpgradeRequiredError` (426)
+- `PreconditionRequiredError` (428)
+- `TooManyRequestsError` (429)
+- `RequestHeaderFieldsTooLargeError` (431)
+- `UnavailableForLegalReasonsError` (451)
 
 #### 5xx Errors
 
-* `InternalServerError` (500)
-* `NotImplementedError` (501)
-* `BadGatewayError` (502)
-* `ServiceUnavailableError` (503)
-* `GatewayTimeoutError` (504)
-* `HttpVersionNotSupportedError` (505)
-* `VariantAlsoNegotiatesError` (506)
-* `InsufficientStorageError` (507)
-* `LoopDetectedError` (508)
-* `NotExtendedError` (510)
-* `NetworkAuthenticationRequiredError` (511)
+- `InternalServerError` (500)
+- `NotImplementedError` (501)
+- `BadGatewayError` (502)
+- `ServiceUnavailableError` (503)
+- `GatewayTimeoutError` (504)
+- `HttpVersionNotSupportedError` (505)
+- `VariantAlsoNegotiatesError` (506)
+- `InsufficientStorageError` (507)
+- `LoopDetectedError` (508)
+- `NotExtendedError` (510)
+- `NetworkAuthenticationRequiredError` (511)
+
+### Pipelines
+
+#### `AccessControlPipeline`
+
+Access control pipeline assigns the following response headers:
+
+- Access-Control-Allow-Origin
+- Access-Control-Allow-Methods
+- Access-Control-Allow-Headers (optional)
+- Access-Control-Expose-Headers (optional)
+
+##### Accepted arguments
+
+```typescript
+/**
+ * @interface AccessControlPipelineOpts
+ */
+export interface AccessControlPipelineOpts {
+  /**
+   * Origin to be set to Access-Control-Allow-Origin value.
+   */
+  origin: string;
+  /**
+   * Top-level HttpRouter for detecting methods available for current route.
+   */
+  router: HttpRouter;
+  /**
+   * Headers allowed to be sent in request.
+   */
+  headers?: string[];
+  /**
+   * Headers allowed to be referenced from browser.
+   */
+  exposeHeaders?: string[];
+}
+```
+
+##### Usage
+
+```javascript
+const router = require('../routing').MainRouter;
+
+const MyPipeline = Pipeline.empty()
+  .concat(
+    AccessControlPipeline({
+      origin: '*',
+      router,
+      headers: ['Accept', 'Content-Type', 'Authorization', 'X-Request-ID', 'If-None-Match'],
+      exposeHeaders: ['ETag'],
+    })
+  )
+  .concat(/**/);
+```
+
+#### `AuthorizationHeaderPipeline`
+
+Authorization header pipeline checks if Authorization header is in place in IncomingMessage and assigns its value
+to `ctx.intermediate.authorizationHeaderValue`.
+
+If the header is missing, it throws `UnauthorizedError`.
+If the header is invalid (auth type wrong or no value), it throws `ForbiddenError`.
+
+**NOTE**: This pipeline is agnostic and you need to unpack the token or whatever the auth string is yourself.
+
+For TypeScript developers, it provides helper `AuthorizationHeaderAware` interface to be passed to generic `HttpContextInterface`.
+
+```typescript
+const MyAuthRelatedMiddleware = (ctx: HttpContextInterface<AuthorizationHeaderAware>) => {};
+```
+
+##### Accepted arguments
+
+```typescript
+/**
+ * @interface AuthorizationHeaderPipelineOpts
+ */
+export interface AuthorizationHeaderPipelineOpts {
+  /**
+   * Authentication type.
+   */
+  authType: WWWAuthenticateType;
+  /**
+   * Custom messages to be displayed in case error occurs.
+   */
+  errors?: {
+    /**
+     * Error if request does not have Authorization header.
+     * @default UnauthorizedError
+     */
+    unauthorized?: HttpError;
+    /**
+     * Error if request has invalid Authorization header.
+     * @default ForbiddenError
+     */
+    forbidden?: HttpError;
+  };
+}
+```
+
+##### Usage
+
+```javascript
+const router = require('../routing').MainRouter;
+
+const MyPipeline = Pipeline.empty()
+  .concat(
+    AuthorizationHeaderPipeline({
+      authType: 'Bearer',
+      errors: {
+        unauthorized: UnauthorizedError.withMessage('Log in to get access to this resource'),
+        forbidden: ForbiddenError.withMessage('You shall not pass'),
+      },
+    })
+  )
+  .concat(/**/);
+```
