@@ -281,7 +281,7 @@ const MyPipeline = Pipeline.empty()
 
 > DEPRECATED: Will be renamed to `SendEmptyResponsePipeline`
 
-End response empty string (_""_).
+End response with empty string (_""_).
 
 If response is finished and an error occurred, the error will be put to stdout.
 If response is finished and no error happened, the pipeline does nothing.
@@ -459,7 +459,7 @@ const AssignContentType = (ctx) => {
   const acceptable = ctx.request.headers.accept.split(', ');
   const json = acceptable.includes('*/*') || acceptable.includes('application/json');
 
-  return SetContentTypeHeader(json ? 'application/json' : 'application/xml');
+  return SetContentTypeHeader(json ? 'application/json' : 'application/xml')(ctx);
 };
 
 const MyPipeline = Pipeline.from([
