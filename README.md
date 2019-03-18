@@ -682,3 +682,17 @@ const { ExtractJSONRequestBody } = require('@priestine/grace');
 
 const MyPipeline = Pipeline.of(ExtractJSONRequestBody(90000));
 ```
+
+##### `ExtractRequestParams`
+
+Extract request params from the `IncomingMessage` if route was registered with RegExp and puts them
+to `intermediate.requestParams` as array.
+
+###### Example
+
+```javascript
+const { Pipeline } = require('@priestine/data/src');
+const { ExtractRequestParams } = require('@priestine/grace');
+
+const MyPipeline = Pipeline.of(ExtractRequestParams);
+```
