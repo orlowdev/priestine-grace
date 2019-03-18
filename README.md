@@ -490,3 +490,26 @@ The middleware has two helpers for common cases:
 
 - TransformResponseObjectKeysFromCamelToSnake
 - TransformResponseObjectKeysFromSnakeToCamel
+
+#### Request-specific
+
+##### `CheckAcceptHeader`
+
+Check if request `Accept` header value is defined and supported. Throws `NotAcceptableError` if header value is not
+acceptable by the server.
+
+This middleware accepts the following arguments:
+
+- **acceptable**: array of strings representing MIME-types acceptable by the server, e.g. `["application/json", "application/xml"]`,
+defaults to `['*/*']`
+- **error**: optional error to be thrown in case MIME-type is not acceptable (defaults to `NotAcceptableError.withMessage('not acceptable'))`
+
+If **acceptable** includes `'*/*'`, any value of `Accept` header does not trigger the error. You can limit that to
+`['application/json']` if you are building JSON API.
+
+```javascript
+const { Pipeline } = require('@priestine/data/src');
+const { CheckAcceptHeader } = require('./');
+
+const MyPipeline = Pipeline.of(CheckAcceptHeader(['application/json']))
+```
