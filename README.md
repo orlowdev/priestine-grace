@@ -501,7 +501,7 @@ acceptable by the server.
 This middleware accepts the following arguments:
 
 - **acceptable**: array of strings representing MIME-types acceptable by the server, e.g. `["application/json", "application/xml"]`,
-defaults to `['*/*']`
+  defaults to `['*/*']`
 - **error**: optional error to be thrown in case MIME-type is not acceptable (defaults to `NotAcceptableError.withMessage('not acceptable'))`
 
 If **acceptable** includes `'*/*'`, any value of `Accept` header does not trigger the error. You can limit that to
@@ -509,7 +509,149 @@ If **acceptable** includes `'*/*'`, any value of `Accept` header does not trigge
 
 ```javascript
 const { Pipeline } = require('@priestine/data/src');
-const { CheckAcceptHeader } = require('./');
+const { CheckAcceptHeader } = require('@priestine/grace');
 
-const MyPipeline = Pipeline.of(CheckAcceptHeader(['application/json']))
+const MyPipeline = Pipeline.of(CheckAcceptHeader(['application/json']));
+```
+
+##### `ValidateObjectBodyProp`
+
+Validate request body object with given set of validators by given request body key. This middleware should be used when
+object is expected in request body.
+
+`@priestine/grace` provides a set of common data-type validators. You can use any other validator, e.g.
+provided by Ramda or Validator.js - validators are functions that accept a value and return a boolean.
+
+`ValidateObjectBodyProp` provides generic interface for type-hinting.
+
+###### Accepted arguments
+
+```typescript
+/**
+ * @interface ValidateBodyOpts
+ */
+export interface ValidateBodyOpts<T, K extends keyof T = keyof T> {
+  /**
+   * requestBody key to be referenced for validating its value.
+   */
+  key: K;
+  /**
+   * Array of validators to be applied to the value.
+   */
+  validators: Array<(value: T[K]) => boolean>;
+  /**
+   * Custom error to be thrown.
+   * @default BadRequestError
+   */
+  error?: HttpError;
+}
+```
+
+###### Example
+
+```typescript
+import { Pipeline } from '@priestine/data/src';
+import { ValidateObjectBodyProp, isRequired, isInteger, isOptional, isString } from '@priestine/grace';
+
+interface ExpectedBody {
+  id: number;
+  firstName: string;
+}
+
+const MyPipeline = Pipeline.from([
+  ValidateObjectBodyProp<ExpectedBody>('id', [isRequired, isInteger]),
+  ValidateObjectBodyProp<ExpectedBody>('firstName', [isOptional([isString])]),
+]);
+```
+
+##### `ValidateArrayBodyProp`
+
+ValidateArrayBodyProp is the same as ValidateObjectBodyProp with the only difference - it should be used when array request
+body is expected as it applies validation recursively on each element in the array.
+
+###### Accepted arguments
+
+```typescript
+/**
+ * @interface ValidateBodyOpts
+ */
+export interface ValidateBodyOpts<T, K extends keyof T = keyof T> {
+  /**
+   * requestBody key to be referenced for validating its value.
+   */
+  key: K;
+  /**
+   * Array of validators to be applied to the value.
+   */
+  validators: Array<(value: T[K]) => boolean>;
+  /**
+   * Custom error to be thrown.
+   * @default BadRequestError
+   */
+  error?: HttpError;
+}
+```
+
+###### Example
+
+```typescript
+import { Pipeline } from '@priestine/data/src';
+import { ValidateArrayBodyProp, isRequired, isInteger, isOptional, isString } from '@priestine/grace';
+
+interface ExpectedBodyArrayItem {
+  id: number;
+  firstName: string;
+}
+
+const MyPipeline = Pipeline.from([
+  ValidateArrayBodyProp<ExpectedBodyArrayItem>({ key: 'id', validators: [isRequired, isInteger] }),
+  ValidateArrayBodyProp<ExpectedBodyArrayItem>({ key: 'firstName', validators: [isOptional([isString])] }),
+]);
+```
+
+##### `ValidateBodyProm`
+
+Apply `ValidateArrayBodyProp` or `ValidateObjectBodyProp` depending on whether request body is an array or an object.
+
+If a primitive is passed, throws `BadRequestError`.
+If validation is not passed, throws `BadRequestError`.
+
+###### Accepted arguments
+
+```typescript
+/**
+ * @interface ValidateBodyOpts
+ */
+export interface ValidateBodyOpts<T, K extends keyof T = keyof T> {
+  /**
+   * requestBody key to be referenced for validating its value.
+   */
+  key: K;
+  /**
+   * Array of validators to be applied to the value.
+   */
+  validators: Array<(value: T[K]) => boolean>;
+  /**
+   * Custom error to be thrown.
+   * @default BadRequestError
+   */
+  error?: HttpError;
+}
+```
+
+###### Example
+
+```typescript
+import { Pipeline } from '@priestine/data/src';
+import { ValidateBodyProp, isRequired, isInteger, isOptional, isString } from '@priestine/grace';
+
+interface ExpectedObjectOrArrayItem {
+  id: number;
+  firstName: string;
+}
+
+const MyPipeline = Pipeline.from([
+  ValidateBodyProp<ExpectedObjectOrArrayItem>({ key: 'id', validators: [isRequired, isInteger] }),
+  ValidateBodyProp<ExpectedObjectOrArrayItem>({ key: 'firstName', validators: [isOptional([isString])] }),
+]);
 ```
