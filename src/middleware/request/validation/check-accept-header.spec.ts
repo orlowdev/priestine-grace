@@ -18,6 +18,10 @@ describe('CheckAcceptHeader', () => {
         request: { headers: { accept: 'application/xml' } },
       } as any)
     ).toThrow(NotFoundError);
+
+    expect(() => CheckAcceptHeader(['application/json'], NotFoundError)({ request: { headers: {} } } as any)).toThrow(
+      NotFoundError
+    );
   });
 
   it('should not throw if */* is acceptable', () => {
