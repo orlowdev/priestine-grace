@@ -696,3 +696,22 @@ const { ExtractRequestParams } = require('@priestine/grace');
 
 const MyPipeline = Pipeline.of(ExtractRequestParams);
 ```
+
+##### `TransformRequestKeys`
+
+Transform keys of request object with given transformer function. The transformation is applied
+recursively.
+
+```javascript
+const { Pipeline } = require('@priestine/data/src');
+const { TransformRequestObjectKeys, EndRequestBodyPipeline } = require('@priestine/grace');
+
+const MyPipeline = Pipeline.of(TransformRequestObjectKeys((x) => x.toUpperCase())).concat(
+  EndRequestBodyPipeline({ json: true })
+);
+```
+
+The middleware has two helpers for common cases:
+
+- TransformRequestObjectKeysFromCamelToSnake
+- TransformRequestObjectKeysFromSnakeToCamel
