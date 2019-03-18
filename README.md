@@ -609,7 +609,7 @@ const MyPipeline = Pipeline.from([
 ]);
 ```
 
-##### `ValidateBodyProm`
+##### `ValidateBodyProp`
 
 Apply `ValidateArrayBodyProp` or `ValidateObjectBodyProp` depending on whether request body is an array or an object.
 
