@@ -48,3 +48,17 @@ export const ValidateArrayBodyProp = <T, A extends T[] = T[], K extends keyof T 
     throw opts.error ? opts.error : BadRequestError.withMessage('bad request');
   }
 };
+
+/**
+ * Validate request body residing in `intermediate.requestBody`, automatically detecting
+ * whether it is an array or not. Only use it for objects or arrays.
+ * @param opts
+ * @constructor
+ */
+export const ValidateBodyProp = <T, K extends keyof T = keyof T>(opts: ValidateBodyOpts<T, K>) => (
+  ctx: HttpContextInterface<RequestBodyAware<T>>
+) => {
+  return Array.isArray(ctx.intermediate.requestBody)
+    ? ValidateArrayBodyProp<T, T[], K>(opts)(ctx as any)
+    : ValidateObjectBodyProp<T, K>(opts)(ctx);
+};
