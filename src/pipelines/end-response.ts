@@ -69,6 +69,10 @@ export const ClearResponseBody = ({ intermediate }: HttpContextInterface<Respons
   responseBody: '',
 });
 
+/**
+ * End response with contents of `ctx.intermediate.responseBody`.
+ * @deprecated Will be renamed to SendResponseBodyPipeline.
+ */
 export const EndResponseBodyPipeline = (opts: EndResponsePipelineOpts) => {
   if (opts.wrap) {
     opts.json = true;
@@ -80,4 +84,8 @@ export const EndResponseBodyPipeline = (opts: EndResponsePipelineOpts) => {
     .concat(Pipeline.of(EndResponse));
 };
 
+/**
+ * End response with empty ('') body.
+ * @deprecated Will be renamed to SendEmptyResponsePipeline.
+ */
 export const EndEmptyResponsePipeline = Pipeline.from([ClearResponseBody, EndResponse]);
