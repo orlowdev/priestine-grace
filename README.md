@@ -655,3 +655,30 @@ const MyPipeline = Pipeline.from([
   ValidateBodyProp<ExpectedObjectOrArrayItem>({ key: 'firstName', validators: [isOptional([isString])] }),
 ]);
 ```
+
+##### `ExtractJSONRequestBody`
+
+Extract body from the `IncomingMessage`. This middleware unpacks the data by piping request to
+`JSONStream`, then to `event-stream.map` and finally puts the request body to `intermediate.requestBody`.
+
+For TypeScript developers, it provides helper `RequestBodyAware<T = {}>` interface to be passed to generic `HttpContextInterface`.
+
+```typescript
+import { HttpContextInterface } from '@priestine/routing';
+import { RequestBodyAware } from '@priestine/grace';
+
+const MyRequestBodyAwareMiddleware = (ctx: HttpContextInterface<RequestBodyAware>) => {};
+```
+
+###### Accepted arguments
+
+- **requestTimeout**: amount of time in milliseconds until request timeout.
+
+###### Example
+
+```javascript
+const { Pipeline } = require('@priestine/data/src');
+const { ExtractJSONRequestBody } = require('@priestine/grace');
+
+const MyPipeline = Pipeline.of(ExtractJSONRequestBody(90000));
+```
