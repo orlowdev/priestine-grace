@@ -522,6 +522,32 @@ object is expected in request body.
 `@priestine/grace` provides a set of common data-type validators. You can use any other validator, e.g.
 provided by Ramda or Validator.js - validators are functions that accept a value and return a boolean.
 
+Validators provided by the package:
+
+- **isInstanceOf**
+- **isObject**
+- **isString**
+- **isBoolean**
+- **isTrue**
+- **isFalse**
+- **isNumber**
+- **isInteger**
+- **isFloat**
+- **isEmpty**
+- **isRequired** - fails if value is falsy
+- **isNull**
+- **isUndefined**
+- **isFunction**
+- **isIn** - fails if value is not in the array provided in the argument
+- **lt** - fails if value is greater than or equal to the one provided in the argument
+- **lte** - fails if value is greater than the one provided in the argument
+- **gt** - fails if value is less than or equal to the one provided in the argument
+- **gte** - fails if value is less than the one provided in the argument
+- **isOptional** - applies validators provided in the argument only if the value is defined
+
+- **negate** - negates the result of validation (e.g. `negate(isNull)` fails if value is null)
+  This function is added for composing notX validators.
+
 `ValidateObjectBodyProp` provides generic interface for type-hinting.
 
 ###### Accepted arguments
