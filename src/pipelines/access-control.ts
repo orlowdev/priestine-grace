@@ -36,7 +36,7 @@ export interface AccessControlPipelineOpts {
  * Detect possible HTTP methods for current URL.
  * @todo Capturing groups
  */
-export const DetectAllowedMethods = (router: HttpRouter) => (ctx: HttpContextInterface): void => {
+export const DetectAllowedMethods = (router: HttpRouter) => (ctx: HttpContextInterface) => {
   if (ctx.intermediate.route) {
     const allowedMethods = Array.from((router.routeMap as any)._routes.keys())
       .filter((x: BaseHttpMatcher<any>) =>

@@ -47,7 +47,7 @@ export interface AuthorizationHeaderPipelineOpts {
  *
  * @throws UnauthorizedError
  */
-export const CheckAuthorizationHeaderExists = (error?: HttpError) => ({ request }: HttpContextInterface): void => {
+export const CheckAuthorizationHeaderExists = (error?: HttpError) => ({ request }: HttpContextInterface) => {
   if (!request.headers.authorization) {
     throw error ? error : UnauthorizedError.withMessage('unauthorized');
   }

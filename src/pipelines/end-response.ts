@@ -49,7 +49,7 @@ export const JSONStringifyResponse = ({ intermediate }: HttpContextInterface<Res
 /**
  * Send contents of the responseBody to the client.
  */
-export const EndResponse = ({ intermediate, error, response }: HttpContextInterface<ResponseBodyAware>): void => {
+export const EndResponse = ({ intermediate, error, response }: HttpContextInterface<ResponseBodyAware>) => {
   if (response.finished) {
     if (error) {
       console.error(error);

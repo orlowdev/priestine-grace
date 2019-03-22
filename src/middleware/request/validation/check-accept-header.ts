@@ -8,7 +8,7 @@ import { HttpError, NotAcceptableError } from '../../../errors';
  */
 export const CheckAcceptHeader = (acceptable: string[] = ['*/*'], error?: HttpError) => ({
   request,
-}: HttpContextInterface): void => {
+}: HttpContextInterface) => {
   if (!request.headers.accept) {
     throw error ? error : NotAcceptableError.withMessage('not acceptable');
   }
