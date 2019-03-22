@@ -1,16 +1,16 @@
 import { HttpContextInterface } from '@priestine/routing';
 
 /**
- * @interface IRequestParamsAware
+ * @interface RequestParamsAware
  */
-export interface IRequestParamsAware {
+export interface RequestParamsAware {
   requestParams: string[];
 }
 
 /**
  * Extract request parameters from the url.
  */
-export const ExtractRequestParams = ({ request, intermediate }: HttpContextInterface<IRequestParamsAware>) => {
+export const ExtractRequestParams = ({ request, intermediate }: HttpContextInterface<RequestParamsAware>) => {
   intermediate.requestParams =
     typeof intermediate.route.url === 'string' ? [] : request.url.match(intermediate.route.url).slice(1);
 
