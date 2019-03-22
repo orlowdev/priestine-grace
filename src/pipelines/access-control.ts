@@ -4,7 +4,7 @@ import {
   SetAccessControlAllowOriginHeader,
   SetAccessControlExposeHeadersHeader,
 } from '../middleware/response';
-import { BaseHttpMatcher, HttpContextInterface, HttpRouter } from '@priestine/routing';
+import { HttpContextInterface } from '@priestine/routing';
 import { AuthorizationHeaderAware } from './authorization-header';
 
 /**
@@ -15,12 +15,6 @@ export interface AccessControlPipelineOpts {
    * Origin to be set to Access-Control-Allow-Origin value.
    */
   origin: string;
-  /**
-   * Top-level HttpRouter for detecting methods available for current route.
-   *
-   * @deprecated This part will be moved to OptionsRouter in later releases.
-   */
-  router: HttpRouter;
   /**
    * Headers allowed to be sent in request.
    */
