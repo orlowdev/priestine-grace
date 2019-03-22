@@ -1,4 +1,4 @@
-import { HttpContextInterface, } from '@priestine/routing';
+import { HttpContextInterface } from '@priestine/routing';
 import { AccessControlPipeline } from './access-control';
 import { IncomingMessage, ServerResponse } from 'http';
 import { Socket } from 'net';
@@ -11,9 +11,7 @@ describe('AccessControlPipeline', () => {
     const response = new ServerResponse(request);
     const ctx = { request, response, intermediate: {} } as HttpContextInterface;
     expect(
-      (await AccessControlPipeline({ origin: '*' }).process(ctx)).response.getHeaders()[
-        'access-control-allow-origin'
-      ]
+      (await AccessControlPipeline({ origin: '*' }).process(ctx)).response.getHeaders()['access-control-allow-origin']
     ).toEqual('*');
   });
 
