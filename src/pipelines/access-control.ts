@@ -37,9 +37,7 @@ export interface AccessControlPipelineOpts {
  * in the argument object, according middleware will not be applied.
  */
 export const AccessControlPipeline = (opts: AccessControlPipelineOpts) =>
-  Pipeline.from<AuthorizationHeaderAware, HttpContextInterface>([
-    SetAccessControlAllowOriginHeader(opts.origin),
-  ])
+  Pipeline.from<AuthorizationHeaderAware, HttpContextInterface>([SetAccessControlAllowOriginHeader(opts.origin)])
     .concat(opts.headers ? Pipeline.of(SetAccessControlAllowHeadersHeader(opts.headers.join(', '))) : Pipeline.empty())
     .concat(
       opts.exposeHeaders
