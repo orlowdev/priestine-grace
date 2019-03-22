@@ -1,7 +1,6 @@
 import { Pipeline } from '@priestine/data';
 import {
   SetAccessControlAllowHeadersHeader,
-  SetAccessControlAllowMethodsHeader,
   SetAccessControlAllowOriginHeader,
   SetAccessControlExposeHeadersHeader,
 } from '../middleware/response';
@@ -33,26 +32,6 @@ export interface AccessControlPipelineOpts {
 }
 
 /**
- * Detect possible HTTP methods for current URL.
- * @todo Capturing groups
- */
-export const DetectAllowedMethods = (router: HttpRouter) => (ctx: HttpContextInterface) => {
-  if (ctx.intermediate.route) {
-    const allowedMethods = Array.from((router.routeMap as any)._routes.keys())
-      .filter((x: BaseHttpMatcher<any>) =>
-        typeof x.url === 'string'
-          ? x.url === ctx.intermediate.route.url
-          : (x.url as RegExp).source === (ctx.intermediate.route.url as RegExp).source
-      )
-      .map((x: BaseHttpMatcher<any>) => x.method);
-
-    const setAllowedMethodsHeader = SetAccessControlAllowMethodsHeader(allowedMethods.join(', '));
-
-    return setAllowedMethodsHeader(ctx);
-  }
-};
-
-/**
  * Access control pipeline assigns values to Access-Control- headers. It leaves
  * `ctx.intermediate` unchanged. If `headers` or `exposeHeaders` are not defined
  * in the argument object, according middleware will not be applied.
@@ -60,7 +39,6 @@ export const DetectAllowedMethods = (router: HttpRouter) => (ctx: HttpContextInt
 export const AccessControlPipeline = (opts: AccessControlPipelineOpts) =>
   Pipeline.from<AuthorizationHeaderAware, HttpContextInterface>([
     SetAccessControlAllowOriginHeader(opts.origin),
-    DetectAllowedMethods(opts.router),
   ])
     .concat(opts.headers ? Pipeline.of(SetAccessControlAllowHeadersHeader(opts.headers.join(', '))) : Pipeline.empty())
     .concat(
